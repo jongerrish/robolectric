@@ -45,6 +45,8 @@ public interface RobolectricPackageManager {
 
   void addActivityIcon(Intent intent, Drawable d);
 
+  void setApplicationIcon(String packageName, Drawable d);
+
   Intent getLaunchIntentForPackage(String packageName);
 
   CharSequence getApplicationLabel(ApplicationInfo info);
@@ -72,6 +74,8 @@ public interface RobolectricPackageManager {
   void addDrawableResolution(String packageName, int resourceId, Drawable drawable);
 
   Drawable getDrawable(String packageName, int resourceId, ApplicationInfo applicationInfo);
+
+  int checkPermission(String permName, String pkgName);
 
   boolean isQueryIntentImplicitly();
 

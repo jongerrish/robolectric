@@ -2,6 +2,7 @@ package org.robolectric;
 
 import android.app.Activity;
 import android.app.Service;
+<<<<<<< HEAD
 import android.os.Looper;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -10,11 +11,13 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.internal.bytecode.RobolectricInternals;
 import org.robolectric.res.ResourceLoader;
+=======
+>>>>>>> 4df0a22e75b6938ab2608cc62b8ac5efea174aff
 import org.robolectric.util.ActivityController;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.Scheduler;
 import org.robolectric.util.ServiceController;
-import org.robolectric.util.ShadowProvider;
+import org.robolectric.internal.ShadowProvider;
 
 //
 // Imports for shims
