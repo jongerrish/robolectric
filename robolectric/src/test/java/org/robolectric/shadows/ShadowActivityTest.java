@@ -933,4 +933,14 @@ public class ShadowActivityTest {
       transcript.add("onActivityDestroyed");
     }
   }
+
+  public static class TestParentActivity extends Activity {}
+
+  public static class TestChildActivity extends Activity {}
+
+  @Test
+  public void getParentActivityIntent() {
+    assertThat(Robolectric.setupActivity(TestChildActivity.class).getParentActivityIntent().getComponent().getClassName())
+        .isEqualTo(TestChildActivity.class.getName());
+  }
 }

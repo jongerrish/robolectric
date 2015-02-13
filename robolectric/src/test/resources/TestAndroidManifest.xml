@@ -15,5 +15,9 @@
 
     <activity android:name="org.robolectric.shadows.ShadowThemeTest$TestActivityWithAThirdTheme"
           android:theme="@style/Theme.ThirdTheme"/>
+
+    <activity android:name="org.robolectric.shadows.ShadowActivityTest$TestParentActivity"/>
+    <activity android:name="org.robolectric.shadows.ShadowActivityTest$TestChildActivity"
+              android:parentActivityName="org.robolectric.shadows.ShadowActivityTest$TestParentActivity"/>
   </application>
 </manifest>
