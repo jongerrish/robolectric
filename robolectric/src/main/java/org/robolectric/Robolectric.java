@@ -2,7 +2,6 @@ package org.robolectric;
 
 import android.app.Activity;
 import android.app.Service;
-<<<<<<< HEAD
 import android.os.Looper;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -11,8 +10,8 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.internal.bytecode.RobolectricInternals;
 import org.robolectric.res.ResourceLoader;
-=======
->>>>>>> 4df0a22e75b6938ab2608cc62b8ac5efea174aff
+import android.os.Looper;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.Scheduler;
@@ -93,6 +92,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ServiceLoader;
 
+import static org.robolectric.Shadows.shadowOf;
+
 public class Robolectric {
   private static final ShadowsAdapter shadowsAdapter = instantiateShadowsAdapter();
 
@@ -125,6 +126,20 @@ public class Robolectric {
 
   public static <T extends Activity> T setupActivity(Class<T> activityClass) {
     return ActivityController.of(shadowsAdapter, activityClass).setup().get();
+  }
+
+  /**
+   * Execute all runnables that have been enqueued on the foreground scheduler.
+   */
+  public static void flushForegroundScheduler() {
+    ShadowLooper.getUiThreadScheduler().advanceToLastPostedRunnable();
+  }
+
+  /**
+   * Execute all runnables that have been enqueues on the background scheduler.
+   */
+  public static void flushBackgroundScheduler() {
+    shadowOf(Looper.getMainLooper()).getScheduler().advanceToLastPostedRunnable();
   }
 
   private static ShadowsAdapter instantiateShadowsAdapter() {
@@ -486,23 +501,11 @@ public class Robolectric {
     return Shadows.shadowOf(instance);
   }
 
-  public static ShadowAlphaAnimation shadowOf(AlphaAnimation instance) {
-    return Shadows.shadowOf(instance);
-  }
-
-  public static ShadowAnimation shadowOf(Animation instance) {
-    return Shadows.shadowOf(instance);
-  }
-
   public static ShadowLayoutAnimationController shadowOf(LayoutAnimationController instance) {
     return Shadows.shadowOf(instance);
   }
 
   public static ShadowAnimationUtils shadowOf(AnimationUtils instance) {
-    return Shadows.shadowOf(instance);
-  }
-
-  public static ShadowAnimator shadowOf(Animator instance) {
     return Shadows.shadowOf(instance);
   }
 
@@ -1000,10 +1003,6 @@ public class Robolectric {
   }
 
   public static ShadowTouchDelegate shadowOf(TouchDelegate instance) {
-    return Shadows.shadowOf(instance);
-  }
-
-  public static ShadowTranslateAnimation shadowOf(TranslateAnimation instance) {
     return Shadows.shadowOf(instance);
   }
 
