@@ -17,6 +17,7 @@ import android.os.RemoteException;
 import android.os.UserManager;
 import android.print.PrintManager;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -108,8 +109,7 @@ public class ShadowApplicationTest {
   }
 
   @Test public void shouldProvideLayoutInflater() throws Exception {
-    Object systemService = RuntimeEnvironment.application.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    assertThat(systemService).isInstanceOf(RoboLayoutInflater.class);
+    checkSystemService(Context.LAYOUT_INFLATER_SERVICE, LayoutInflater.class);
   }
 
   @Test
