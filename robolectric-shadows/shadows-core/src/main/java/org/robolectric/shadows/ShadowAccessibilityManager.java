@@ -33,22 +33,6 @@ public class ShadowAccessibilityManager {
   private List<ServiceInfo> accessibilityServiceList;
   private boolean touchExplorationEnabled;
 
-#if ($api >= 19)
-  @HiddenApi @Implementation
-  public static AccessibilityManager getInstance(Context context) throws Exception {
-    AccessibilityManager accessibilityManager = Shadow.newInstance(AccessibilityManager.class, new Class[] {Context.class, IAccessibilityManager.class, int.class}, new Object[] {context, new AccessibilityManagerService(context), 0});
-    ReflectionHelpers.setField(accessibilityManager, "mHandler", new MyHandler(context.getMainLooper(), accessibilityManager));
-    return accessibilityManager;
-  }
-#else
-  @HiddenApi @Implementation
-  public static AccessibilityManager getInstance(Context context) throws Exception {
-    AccessibilityManager accessibilityManager = Shadow.newInstance(AccessibilityManager.class, new Class[0], new Object[0]);
-    ReflectionHelpers.setField(accessibilityManager, "mHandler", new MyHandler(context.getMainLooper(), accessibilityManager));
-    return accessibilityManager;
-  }
-#end
-
   @Implementation
   public boolean addAccessibilityStateChangeListener(AccessibilityManager.AccessibilityStateChangeListener listener) {
     return true;
@@ -102,26 +86,5 @@ public class ShadowAccessibilityManager {
 
   public void setTouchExplorationEnabled(boolean touchExplorationEnabled) {
     this.touchExplorationEnabled = touchExplorationEnabled;
-  }
-
-  static class MyHandler extends Handler {
-    private static final int DO_SET_STATE = 10;
-    private final AccessibilityManager accessibilityManager;
-
-    MyHandler(Looper mainLooper, AccessibilityManager accessibilityManager) {
-      super(mainLooper);
-      this.accessibilityManager = accessibilityManager;
-    }
-
-    @Override
-    public void handleMessage(Message message) {
-      switch (message.what) {
-        case DO_SET_STATE:
-          ReflectionHelpers.callInstanceMethod(accessibilityManager, "setState", ClassParameter.from(int.class, message.arg1));
-          return;
-        default:
-          Log.w("AccessibilityManager", "Unknown message type: " + message.what);
-      }
-    }
   }
 }
