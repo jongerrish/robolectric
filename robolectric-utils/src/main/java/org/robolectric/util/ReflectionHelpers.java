@@ -390,4 +390,21 @@ public class ReflectionHelpers {
       return new StringParameter<>(className, val);
     }
   }
+
+  /**
+   * Returns the default return type of a given methods.
+   */
+  public static Object nullish(Method method) {
+    Class<?> returnType = method.getReturnType();
+    if (returnType.equals(long.class)
+        || returnType.equals(double.class)
+        || returnType.equals(int.class)
+        || returnType.equals(float.class)
+        || returnType.equals(short.class)
+        || returnType.equals(byte.class)
+        ) return 0;
+    if (returnType.equals(char.class)) return '\0';
+    if (returnType.equals(boolean.class)) return false;
+    return null;
+  }
 }

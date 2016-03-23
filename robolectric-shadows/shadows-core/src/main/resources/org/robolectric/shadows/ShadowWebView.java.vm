@@ -68,12 +68,12 @@ public class ShadowWebView extends ShadowAbsoluteLayout {
               }, new InvocationHandler() {
                 @Override
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                  return nullish(method);
+                  return ReflectionHelpers.nullish(method);
                 }
               });
             }
 
-            return nullish(method);
+            return ReflectionHelpers.nullish(method);
           }
         });
         mProvider.set(realView, provider);
@@ -86,20 +86,6 @@ public class ShadowWebView extends ShadowAbsoluteLayout {
   @Implementation
   public void setLayoutParams(LayoutParams params) {
     ReflectionHelpers.setField(realWebView, "mLayoutParams", params);
-  }
-
-  private Object nullish(Method method) {
-    Class<?> returnType = method.getReturnType();
-    if (returnType.equals(long.class)
-        || returnType.equals(double.class)
-        || returnType.equals(int.class)
-        || returnType.equals(float.class)
-        || returnType.equals(short.class)
-        || returnType.equals(byte.class)
-        ) return 0;
-    if (returnType.equals(char.class)) return '\0';
-    if (returnType.equals(boolean.class)) return false;
-    return null;
   }
 
   private Class<?> getClassNamed(String className) {
