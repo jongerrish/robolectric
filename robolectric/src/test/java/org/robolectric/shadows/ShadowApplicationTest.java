@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.UserManager;
+import android.os.Vibrator;
 import android.print.PrintManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,12 +32,8 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.TestRunners;
 import org.robolectric.annotation.Config;
-import org.robolectric.fakes.RoboSensorManager;
-import org.robolectric.fakes.RoboVibrator;
 import org.robolectric.manifest.AndroidManifest;
 import org.robolectric.res.Fs;
-import org.robolectric.res.ResName;
-import org.robolectric.res.ResourceExtractor;
 import org.robolectric.test.TemporaryFolder;
 import org.robolectric.util.Scheduler;
 import org.robolectric.util.TestBroadcastReceiver;
@@ -75,9 +73,9 @@ public class ShadowApplicationTest {
     checkSystemService(Context.KEYGUARD_SERVICE, android.app.KeyguardManager.class);
     checkSystemService(Context.LOCATION_SERVICE, android.location.LocationManager.class);
     checkSystemService(Context.SEARCH_SERVICE, android.app.SearchManager.class);
-    checkSystemService(Context.SENSOR_SERVICE, RoboSensorManager.class);
+    checkSystemService(Context.SENSOR_SERVICE, SensorManager.class);
     checkSystemService(Context.STORAGE_SERVICE, android.os.storage.StorageManager.class);
-    checkSystemService(Context.VIBRATOR_SERVICE, RoboVibrator.class);
+    checkSystemService(Context.VIBRATOR_SERVICE, Vibrator.class);
     checkSystemService(Context.CONNECTIVITY_SERVICE, android.net.ConnectivityManager.class);
     checkSystemService(Context.WIFI_SERVICE, android.net.wifi.WifiManager.class);
     checkSystemService(Context.AUDIO_SERVICE, android.media.AudioManager.class);
@@ -598,13 +596,6 @@ public class ShadowApplicationTest {
             "    " + contents + "\n" +
             "</manifest>\n");
     return new AndroidManifest(Fs.newFile(f), null, null);
-  }
-
-  private static class ImperviousResourceExtractor extends ResourceExtractor {
-    @Override
-    public ResName getResName(int resourceId) {
-      return new ResName("", "", "");
-    }
   }
 
   private static class EmptyServiceConnection implements ServiceConnection {
