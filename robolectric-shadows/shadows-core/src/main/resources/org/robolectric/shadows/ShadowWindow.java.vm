@@ -27,10 +27,6 @@ public class ShadowWindow {
   private int flags;
   private int softInputMode;
 
-  public static Window create(Context context) throws Exception {
-    return new PhoneWindow(context);
-  }
-
   @Implementation
   public void setFlags(int flags, int mask) {
     this.flags = (this.flags & ~mask) | (flags & mask);

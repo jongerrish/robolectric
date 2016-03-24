@@ -25,8 +25,6 @@ public enum Intrinsics {
   INCREMENT_EXPECTED_ACTIVITY_COUNT("android.os.StrictMode", "incrementExpectedActivityCount"),
   AUTO_CLOSEABLE("java.lang.AutoCloseable", "*"),
   GET_LAYOUT_DIRECTION_FROM_LOCALE("android.util.LocaleUtil", "getLayoutDirectionFromLocale"),
-  MAKE_NEW_WINDOW("com.android.internal.policy.PolicyManager", "makeNewWindow"),
-  POLICY_MANAGER("com.android.internal.policy.PolicyManager", "*"),
   FALLBACK_EVENT_HANDLER("android.view.FallbackEventHandler", "*"),
   I_WINDOW_SESSION("android.view.IWindowSession", "*"),
   NANO_TIME("java.lang.System", "nanoTime"),
@@ -37,11 +35,11 @@ public enum Intrinsics {
 
   private final MethodRef ref;
 
-  private Intrinsics(Class<?> type, String methodName) {
+  Intrinsics(Class<?> type, String methodName) {
     ref = new MethodRef(type, methodName);
   }
 
-  private Intrinsics(String className, String methodName) {
+  Intrinsics(String className, String methodName) {
     ref = new MethodRef(className, methodName);
   }
 
@@ -64,7 +62,6 @@ public enum Intrinsics {
     private static final MethodHandle ARRAY_COPY;
     private static final MethodHandle ADJUST_LANGUAGE_CODE;
     private static final MethodHandle LOG_E;
-    private static final MethodHandle MAKE_NEW_WINDOW;
     private static final MethodHandle NOTHING = constant(Void.class, null).asType(methodType(void.class));
 
     private static final Map<MethodRef, MethodHandle> intrinsics;
@@ -78,13 +75,11 @@ public enum Intrinsics {
         ARRAY_COPY = lookup.findStatic(System.class, "arraycopy", methodType(void.class, Object.class, int.class, Object.class, int.class, int.class));
         ADJUST_LANGUAGE_CODE = identity(String.class);
         LOG_E = lookup.findStatic(Impl.class, "logE", methodType(void.class, Object[].class));
-        MAKE_NEW_WINDOW = lookup.findStatic(ShadowWindow.class, "create", methodType(Window.class, Context.class));
       } catch (NoSuchMethodException | IllegalAccessException e) {
         throw new AssertionError(e);
       }
 
       intrinsics = new Builder().add(Intrinsics.ELDEST, ELDEST)
-          .add(Intrinsics.MAKE_NEW_WINDOW, MAKE_NEW_WINDOW)
           .add(Intrinsics.NANO_TIME, NANO_TIME)
           .add(Intrinsics.CURRENT_TIME_MILLIS, MILLIS_TIME)
           .add(Intrinsics.ARRAYCOPY, ARRAY_COPY)

@@ -281,31 +281,6 @@ public class ShadowWrangler implements ClassHandler {
           return map.isEmpty() ? null : map.entrySet().iterator().next();
         }
       };
-    } else if (methodSignature.matches("com.android.internal.policy.PolicyManager", "makeNewWindow")) {
-      return new Function<Object, Object>() {
-        @Override
-        public Object call(Class<?> theClass, Object value, Object[] params) {
-          ClassLoader cl = theClass.getClassLoader();
-          Class<?> shadowWindowClass;
-
-          try {
-            shadowWindowClass = cl.loadClass("org.robolectric.shadows.ShadowWindow");
-          } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-          }
-
-          Class<?> activityClass;
-
-          try {
-            activityClass = cl.loadClass(Context.class.getName());
-          } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-          }
-
-          Object context = params[0];
-          return ReflectionHelpers.callStaticMethod(shadowWindowClass, "create", ClassParameter.from(activityClass, context));
-        }
-      };
     } else if (methodSignature.matches("java.lang.System", "nanoTime") || methodSignature.matches("java.lang.System", "currentTimeMillis")) {
       return new Function<Object, Object>() {
         @Override

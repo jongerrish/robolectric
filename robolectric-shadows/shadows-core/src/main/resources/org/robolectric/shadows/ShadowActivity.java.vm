@@ -153,18 +153,6 @@ public class ShadowActivity extends ShadowContextThemeWrapper {
     return new MenuInflater(realActivity);
   }
 
-  /**
-   * Checks to ensure that the{@code contentView} has been set
-   *
-   * @param id ID of the view to find
-   * @return the view
-   * @throws RuntimeException if the {@code contentView} has not been called first
-   */
-  @Implementation
-  public View findViewById(int id) {
-    return getWindow().findViewById(id);
-  }
-
   @Implementation
   public final Activity getParent() {
     return parent;
@@ -202,32 +190,6 @@ public class ShadowActivity extends ShadowContextThemeWrapper {
     return finishWasCalled;
   }
 
-  /**
-   * Constructs a new Window (a {@link com.android.internal.policy.impl.PhoneWindow}) if no window has previously been
-   * set.
-   *
-   * @return the window associated with this Activity
-   */
-  @Implementation
-  public Window getWindow()  {
-    Window window = directlyOn(realActivity, Activity.class).getWindow();
-
-    if (window == null) {
-      try {
-        window = ShadowWindow.create(realActivity);
-        setWindow(window);
-      } catch (Exception e) {
-        throw new RuntimeException("Window creation failed!", e);
-      }
-    }
-
-    return window;
-  }
-
-  public void setWindow(Window window) {
-    ReflectionHelpers.setField(realActivity, "mWindow", window);
-  }
-
   @Implementation
   public void runOnUiThread(Runnable action) {
     ShadowApplication.getInstance().getForegroundThreadScheduler().post(action);
@@ -254,15 +216,6 @@ public class ShadowActivity extends ShadowContextThemeWrapper {
   @Implementation
   public int getTaskId() {
     return 0;
-  }
-
-  /**
-   * Non-Android accessor.
-   *
-   * @return the {@code contentView} set by one of the {@code setContentView()} methods
-   */
-  public View getContentView() {
-    return ((ViewGroup) getWindow().findViewById(R.id.content)).getChildAt(0);
   }
 
   /**
