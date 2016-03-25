@@ -81,7 +81,7 @@ public abstract class ShadowVibrator {
       return repeat;
     }
 
-    @Implements(SystemVibrator.class)
+    @Implements(value = SystemVibrator.class, inheritImplementationMethods = true)
     public static class ShadowSystemVibrator extends ShadowVibrator {
 
       @Implementation

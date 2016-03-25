@@ -32,11 +32,11 @@ public class ShadowVibratorTest {
   @Test
   public void vibratePattern() {
     long[] pattern = new long[] { 0, 200 };
-    vibrator.vibrate(pattern, 2);
+    vibrator.vibrate(pattern, 1);
 
     assertThat(shadowOf(vibrator).isVibrating()).isTrue();
     assertThat(shadowOf(vibrator).getPattern()).isEqualTo(pattern);
-    assertThat(shadowOf(vibrator).getRepeat()).isEqualTo(2);
+    assertThat(shadowOf(vibrator).getRepeat()).isEqualTo(1);
   }
 
   @Test
