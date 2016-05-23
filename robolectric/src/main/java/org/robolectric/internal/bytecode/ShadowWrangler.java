@@ -44,13 +44,12 @@ public class ShadowWrangler implements ClassHandler {
   private static final MethodHandle NO_SHADOW_HANDLE = constant(Object.class, NO_SHADOW);
   private final ShadowMap shadowMap;
   private final Map<Class, MetaShadow> metaShadowMap = new HashMap<>();
-  private final Map<String, Plan> planCache =
-      Collections.synchronizedMap(new LinkedHashMap<String, Plan>() {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, Plan> eldest) {
-          return size() > 500;
-        }
-      });
+  private final Map<String, Plan> planCache = new LinkedHashMap<String, Plan>() {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, Plan> eldest) {
+      return size() > 500;
+    }
+  };
   private final Map<Class, ShadowConfig> shadowConfigCache = new ConcurrentHashMap<>();
   private final ClassValue<ShadowConfig> shadowConfigs = new ClassValue<ShadowConfig>() {
     @Override protected ShadowConfig computeValue(Class<?> type) {
@@ -127,11 +126,8 @@ public class ShadowWrangler implements ClassHandler {
 
   @Override
   public Plan methodInvoked(String signature, boolean isStatic, Class<?> theClass) {
-    Plan plan = planCache.get(signature);
-    if (plan != null) {
-      return plan;
-    }
-    plan = calculatePlan(signature, isStatic, theClass);
+    if (planCache.containsKey(signature)) return planCache.get(signature);
+    Plan plan = calculatePlan(signature, isStatic, theClass);
     planCache.put(signature, plan);
     return plan;
   }
