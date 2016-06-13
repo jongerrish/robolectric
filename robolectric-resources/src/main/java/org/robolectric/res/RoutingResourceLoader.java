@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import org.robolectric.res.builder.XmlBlock;
 
-public class RoutingResourceLoader extends ResourceLoader {
+public class RoutingResourceLoader implements ResourceLoader {
   private final Map<String, ResourceLoader> resourceLoaders;
   private final ResourceIndex resourceIndex;
 

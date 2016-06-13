@@ -152,18 +152,19 @@ public class ShadowResources {
   @Implementation
   public String getQuantityString(int id, int quantity) throws Resources.NotFoundException {
     ShadowAssetManager shadowAssetManager = shadowOf(realResources.getAssets());
-    Plural plural = shadowAssetManager.getResourceLoader().getPlural(id, quantity, RuntimeEnvironment.getQualifiers());
     ResName resName = shadowAssetManager.getResName(id);
-    TypedResource<?> typedResource = shadowAssetManager.getResourceLoader().resolve(
-        new TypedResource<>(plural.getString(), ResType.CHAR_SEQUENCE),
-        RuntimeEnvironment.getQualifiers(),
+    Plural plural = shadowAssetManager.getResourceLoader().getPlural(resName, quantity, RuntimeEnvironment.getQualifiers());
+    String string = plural.getString();
+    TypedResource<?> typedResource = shadowAssetManager.resolve(
+        new TypedResource<>(string, ResType.CHAR_SEQUENCE), RuntimeEnvironment.getQualifiers(),
         new ResName(resName.packageName, "string", resName.name));
     return typedResource == null ? null : typedResource.asString();
   }
 
   @Implementation
   public InputStream openRawResource(int id) throws Resources.NotFoundException {
-    return shadowOf(realResources.getAssets()).getResourceLoader().getRawValue(id);
+    ShadowAssetManager shadowAssetManager = shadowOf(realResources.getAssets());
+    return shadowAssetManager.getResourceLoader().getRawValue(shadowAssetManager.getResName(id));
   }
 
   @Implementation
@@ -211,7 +212,7 @@ public class ShadowResources {
   @HiddenApi @Implementation
   public XmlResourceParser loadXmlResourceParser(int id, String type) throws Resources.NotFoundException {
     ShadowAssetManager shadowAssetManager = shadowOf(realResources.getAssets());
-    ResName resName = shadowAssetManager.getResourceLoader().resolveResName(id, RuntimeEnvironment.getQualifiers());
+    ResName resName = shadowAssetManager.resolveResName(id);
     XmlBlock block = shadowAssetManager.getResourceLoader().getXml(resName, RuntimeEnvironment.getQualifiers());
     if (block == null) {
       throw new Resources.NotFoundException();
