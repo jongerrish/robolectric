@@ -59,9 +59,6 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner {
   private static final Map<Pair<AndroidManifest, SdkConfig>, ResourceLoader> resourceLoadersByManifestAndConfig = new HashMap<>();
   private static final Map<ManifestIdentifier, AndroidManifest> appManifestsByFile = new HashMap<>();
 
-  /** Caches process R classes to avoid building their expensive index repeatedly */
-  private final Map<String, ResourceIndex> rClassToIndex = new HashMap<>();
-
   private TestLifecycle<Application> testLifecycle;
   private DependencyResolver dependencyResolver;
 
@@ -110,10 +107,6 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner {
     }
 
     return dependencyResolver;
-  }
-
-  protected ClassHandler createClassHandler(ShadowMap shadowMap, SdkConfig sdkConfig) {
-    return new ShadowWrangler(shadowMap);
   }
 
   protected AndroidManifest createAppManifest(FsFile manifestFile, FsFile resDir, FsFile assetDir, String packageName) {
@@ -251,7 +244,7 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner {
                 "RELEASE", sdkConfig.getAndroidVersion());
 
             ResourceLoader systemResourceLoader = sdkEnvironment.getSystemResourceLoader(getJarResolver());
-            setUpApplicationState(bootstrappedMethod, parallelUniverseInterface, systemResourceLoader, appManifest, config);
+            parallelUniverseInterface.setUpApplicationState(bootstrappedMethod, testLifecycle, systemResourceLoader, appManifest, config);
             testLifecycle.beforeTest(bootstrappedMethod);
           } catch (Exception e) {
             e.printStackTrace();
@@ -413,14 +406,10 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner {
     synchronized (sdkEnvironment) {
       classHandler = sdkEnvironment.classHandlersByShadowMap.get(shadowMap);
       if (classHandler == null) {
-        classHandler = createClassHandler(shadowMap, sdkEnvironment.getSdkConfig());
+        classHandler = new ShadowWrangler(shadowMap);
       }
     }
     return classHandler;
-  }
-
-  protected void setUpApplicationState(Method method, ParallelUniverseInterface parallelUniverseInterface, ResourceLoader systemResourceLoader, AndroidManifest appManifest, Config config) {
-    parallelUniverseInterface.setUpApplicationState(method, testLifecycle, systemResourceLoader, appManifest, config);
   }
 
   protected int pickSdkVersion(Config config, AndroidManifest manifest) {
